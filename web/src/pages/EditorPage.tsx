@@ -6,7 +6,17 @@ import { Sidebar } from '../components/Sidebar';
 import { Card, Spinner, ErrorMessage, Badge } from '../components/UI';
 import { SitePreview } from '../components/SitePreview';
 import { layoutLabel } from '../components/siteHtml';
-import type { SiteContent, SiteBrief } from '../types/site';
+import type { SiteContent, SiteBrief, SiteLayout, FaqItem } from '../types/site';
+
+const LAYOUT_OPTIONS: SiteLayout[] = [
+  'barbearia',
+  'salao',
+  'restaurante',
+  'loja',
+  'clinica',
+  'servico',
+  'generico',
+];
 
 export default function EditorPage() {
   const { id } = useParams<{ id: string }>();
@@ -82,6 +92,48 @@ export default function EditorPage() {
     });
   }
 
+  function updateLayout(layout: SiteLayout) {
+    setContent((p) => (p ? { ...p, layout } : p));
+  }
+
+  function updateFaqItem(index: number, field: keyof FaqItem, value: string) {
+    setContent((p) => {
+      if (!p) return p;
+      const items = [...p.faq.items];
+      items[index] = { ...items[index], [field]: value };
+      return { ...p, faq: { ...p.faq, items } };
+    });
+  }
+  function addFaqItem() {
+    setContent((p) => (p ? { ...p, faq: { ...p.faq, items: [...p.faq.items, { q: '', a: '' }] } } : p));
+  }
+  function removeFaqItem(index: number) {
+    setContent((p) => {
+      if (!p) return p;
+      const items = p.faq.items.filter((_, i) => i !== index);
+      return { ...p, faq: { ...p.faq, items } };
+    });
+  }
+
+  function updateGalleryImage(index: number, value: string) {
+    setContent((p) => {
+      if (!p) return p;
+      const images = [...p.gallery.images];
+      images[index] = value;
+      return { ...p, gallery: { ...p.gallery, images } };
+    });
+  }
+  function addGalleryImage() {
+    setContent((p) => (p ? { ...p, gallery: { ...p.gallery, images: [...p.gallery.images, ''] } } : p));
+  }
+  function removeGalleryImage(index: number) {
+    setContent((p) => {
+      if (!p) return p;
+      const images = p.gallery.images.filter((_, i) => i !== index);
+      return { ...p, gallery: { ...p.gallery, images } };
+    });
+  }
+
   if (isLoading || !content) {
     return (
       <div className="flex min-h-screen">
@@ -129,6 +181,26 @@ export default function EditorPage() {
             </Card>
 
             <Card>
+              <h3 className="text-sm font-medium text-ink-strong mb-3">Layout</h3>
+              <div className="flex flex-wrap gap-2">
+                {LAYOUT_OPTIONS.map((l) => (
+                  <button
+                    key={l}
+                    type="button"
+                    onClick={() => updateLayout(l)}
+                    className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                      content.layout === l
+                        ? 'bg-brand-soft text-brand border-brand'
+                        : 'bg-surface-hover text-ink-base border-surface-line hover:text-ink-strong'
+                    }`}
+                  >
+                    {layoutLabel(l)}
+                  </button>
+                ))}
+              </div>
+            </Card>
+
+            <Card>
               <h3 className="text-sm font-medium text-ink-strong mb-3">Hero</h3>
               <div className="flex flex-col gap-3">
                 <div>
@@ -173,6 +245,78 @@ export default function EditorPage() {
               onAdd={() => addListItem('differentials')}
               onRemove={(i) => removeListItem('differentials', i)}
             />
+
+            <Card>
+              <h3 className="text-sm font-medium text-ink-strong mb-3">Perguntas frequentes</h3>
+              <div className="flex flex-col gap-3">
+                {content.faq.items.map((item, i) => (
+                  <div key={i} className="flex flex-col gap-2 p-3 rounded-lg border border-surface-line">
+                    <div className="flex items-start gap-2">
+                      <input
+                        className="field"
+                        value={item.q}
+                        onChange={(e) => updateFaqItem(i, 'q', e.target.value)}
+                        placeholder={`Pergunta ${i + 1}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeFaqItem(i)}
+                        className="text-xs text-red-400 hover:text-red-300 px-2 shrink-0"
+                      >
+                        Remover
+                      </button>
+                    </div>
+                    <textarea
+                      className="field"
+                      rows={2}
+                      value={item.a}
+                      onChange={(e) => updateFaqItem(i, 'a', e.target.value)}
+                      placeholder="Resposta"
+                    />
+                  </div>
+                ))}
+                <button type="button" onClick={addFaqItem} className="btn-secondary text-xs self-start">
+                  Adicionar pergunta
+                </button>
+              </div>
+            </Card>
+
+            <Card>
+              <h3 className="text-sm font-medium text-ink-strong mb-3">Galeria de fotos</h3>
+              <p className="text-xs text-ink-faint mb-3">
+                Cole o link de cada foto (ex: uma imagem hospedada no seu Google Drive, Imgur ou site). Upload direto de arquivo ainda não está disponível.
+              </p>
+              <div className="flex flex-col gap-2">
+                {content.gallery.images.map((src, i) => (
+                  <div key={i} className="flex gap-2 items-center">
+                    {src && (
+                      <img
+                        src={src}
+                        alt=""
+                        className="w-10 h-10 rounded object-cover border border-surface-line shrink-0"
+                        onError={(e) => (e.currentTarget.style.visibility = 'hidden')}
+                      />
+                    )}
+                    <input
+                      className="field"
+                      value={src}
+                      onChange={(e) => updateGalleryImage(i, e.target.value)}
+                      placeholder={`URL da foto ${i + 1}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeGalleryImage(i)}
+                      className="text-xs text-red-400 hover:text-red-300 px-2 shrink-0"
+                    >
+                      Remover
+                    </button>
+                  </div>
+                ))}
+                <button type="button" onClick={addGalleryImage} className="btn-secondary text-xs self-start">
+                  Adicionar foto
+                </button>
+              </div>
+            </Card>
 
             <Card>
               <h3 className="text-sm font-medium text-ink-strong mb-3">Contato</h3>
