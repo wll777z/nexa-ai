@@ -6,6 +6,7 @@ import ContactsPage from './pages/ContactsPage';
 import CreateSitePage from './pages/CreateSitePage';
 import MySitesPage from './pages/MySitesPage';
 import EditorPage from './pages/EditorPage';
+import AiBuilderPage from './pages/AiBuilderPage';
 
 export default function App() {
   const { isAuthenticated, loading } = useAuth();
@@ -32,6 +33,8 @@ export default function App() {
       <Route path="/login" element={<Navigate to="/" replace />} />
       <Route path="/" element={<DashboardPage />} />
       <Route path="/create-site" element={<CreateSitePage />} />
+      <Route path="/ai-builder" element={<AiBuilderPage />} />
+      <Route path="/ai-builder/:id" element={<AiBuilderPage />} />
       <Route path="/my-sites" element={<MySitesPage />} />
       <Route path="/editor/:id" element={<EditorPage />} />
       <Route path="/contacts" element={<ContactsPage />} />

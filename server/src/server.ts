@@ -8,6 +8,7 @@ import { authRouter } from './modules/auth/auth.routes.js';
 import { contactsRouter } from './modules/contacts/contacts.routes.js';
 import { dashboardRouter } from './modules/dashboard/dashboard.routes.js';
 import { sitesRouter } from './modules/sites/sites.routes.js';
+import { sitesAiRouter } from './modules/sites/sites.ai.routes.js';
 
 /** Monta a aplicação Express. Separado do listen() para uso nos testes. */
 export function createApp() {
@@ -28,6 +29,8 @@ export function createApp() {
   app.use('/api/auth', authRouter);
   app.use('/api/contacts', contactsRouter);
   app.use('/api/dashboard', dashboardRouter);
+  // Rotas de HTML por chat (Claude) antes do CRUD de sites
+  app.use('/api/sites', sitesAiRouter);
   app.use('/api/sites', sitesRouter);
 
   // Rota não encontrada

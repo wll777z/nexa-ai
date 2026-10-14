@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 const navItems = [
   { to: '/', label: 'Visão geral' },
   { to: '/create-site', label: 'Criar site com IA' },
+  { to: '/ai-builder', label: 'Construtor por chat' },
   { to: '/my-sites', label: 'Meus sites' },
   { to: '/contacts', label: 'Clientes e contatos' },
 ];
