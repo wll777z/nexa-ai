@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+npm-debug.log*
+
+# Banco de dados local
+server/data/
+*.db
+*.db-wal
+*.db-shm
+
+# Sistema
+.DS_Store
+Thumbs.db

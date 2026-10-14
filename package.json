@@ -1,0 +1,31 @@
+{
+  "name": "nexa-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NEXA AI — plataforma de IA comercial: CRM, campanhas, automações e criador de sites",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "install:all": "npm install",
+    "dev:server": "npm run dev --workspace @nexa/server",
+    "dev:web": "npm run dev --workspace @nexa/web",
+    "build": "npm run build --workspace @nexa/server && npm run build --workspace @nexa/web",
+    "test": "npm test --workspace @nexa/server",
+    "migrate": "npm run migrate --workspace @nexa/server",
+    "typecheck": "npm run typecheck --workspace @nexa/server && npm run typecheck --workspace @nexa/web"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "esbuild@0.21.5": true
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.30",
+    "tailwindcss": "^3.4.19"
+  }
+}

@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+  body {
+    @apply bg-surface-app text-ink-strong font-sans;
+    margin: 0;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface-card border border-surface-line rounded-xl p-5;
+  }
+  .btn-primary {
+    @apply bg-brand text-white px-4 py-2 rounded-lg font-medium
+           hover:bg-brand-hover transition-colors
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-surface-hover text-ink-strong px-4 py-2 rounded-lg font-medium
+           border border-surface-line hover:border-brand transition-colors;
+  }
+  .field {
+    @apply w-full bg-surface-panel border border-surface-line rounded-lg px-3 py-2
+           text-ink-strong placeholder-ink-faint
+           focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand;
+  }
+  .field-label {
+    @apply block text-sm font-medium text-ink-base mb-1;
+  }
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-ink-base
+           hover:bg-surface-hover hover:text-ink-strong transition-colors text-sm;
+  }
+  .sidebar-link-active {
+    @apply bg-brand-soft text-brand hover:bg-brand-soft hover:text-brand;
+  }
+}

@@ -1,0 +1,205 @@
+# NEXA AI — IMPLEMENTAR AS FUNCIONALIDADES DO CRIE.AI NO PROJETO EXISTENTE
+
+Você está trabalhando no projeto NEXA AI, que já possui uma aplicação web em React/TypeScript/Vite, um backend Node.js/TypeScript/Express e um banco de dados SQLite.
+
+O projeto já apresenta:
+- Login e sessão do usuário.
+- Painel de visão geral.
+- Página de clientes e contatos.
+- Endpoints de autenticação, contatos e métricas.
+
+## OBJETIVO
+
+Evoluir a NEXA AI para uma plataforma profissional de criação de sites com inteligência artificial e gestão comercial, usando como referência funcional o site https://crieai.app/.
+
+Não comece do zero. Não apague nem substitua funcionalidades que já funcionam. Primeiro examine os arquivos reais do projeto, identifique o que existe e implemente as melhorias diretamente nos arquivos.
+
+## 1. INTERFACE E NAVEGAÇÃO
+
+Crie uma interface profissional, responsiva e em português, preservando a identidade visual escura atual e melhorando o acabamento.
+
+Organize a navegação lateral com:
+
+1. Visão geral
+2. Criar site com IA
+3. Meus sites
+4. Editor visual
+5. Prospecção de clientes
+6. Clientes e contatos
+7. Propostas comerciais
+8. Contratos e mensalidades
+9. Mensagens
+10. Campanhas
+11. Automações
+12. Relatórios
+13. Configurações
+
+Cada item deve abrir uma página funcional. Não crie botões decorativos nem páginas vazias.
+
+## 2. CRIADOR DE SITES COM IA
+
+Implemente uma tela em que o usuário possa descrever o site desejado, informando:
+- Nome da empresa.
+- Segmento de negócio.
+- Serviços ou produtos.
+- Público-alvo.
+- Cores e estilo visual.
+- WhatsApp, telefone e e-mail.
+- Endereço, quando aplicável.
+- Páginas e funcionalidades desejadas.
+
+Inclua exemplos de prompts e modelos para barbearias, salões de beleza, restaurantes, lojas, prestadores de serviços e empresas locais.
+
+O usuário deve conseguir enviar uma descrição, acompanhar o estado da geração e visualizar o resultado.
+
+A geração precisa usar uma API real de IA configurada no servidor. Leia a chave por variável de ambiente. Nunca exponha segredos no frontend.
+
+Se não houver uma API configurada, mostre uma mensagem explicando como configurar. Não simule uma geração real nem afirme que um site foi criado por IA quando isso não aconteceu.
+
+## 3. MEUS SITES E EDITOR VISUAL
+
+Crie uma área para listar, abrir, renomear, duplicar, editar e excluir projetos do próprio usuário.
+
+Implemente um editor visual que permita:
+- Alterar títulos e textos.
+- Modificar cores e tipografia.
+- Editar botões e links.
+- Adicionar, remover e reorganizar seções.
+- Configurar imagens.
+- Visualizar desktop e celular.
+- Salvar rascunhos e versões.
+- Pré-visualizar o site antes de publicar.
+
+Salve os projetos e as alterações no banco de dados. Após atualizar a página, os dados devem continuar disponíveis.
+
+Gere páginas com HTML semântico e CSS responsivo, ou com a estrutura React existente quando for mais adequada. Não misture tecnologias desnecessariamente.
+
+## 4. PUBLICAÇÃO REAL
+
+Implemente uma arquitetura de publicação que permita configurar um provedor de hospedagem.
+
+Inclua estados como rascunho, pronto para publicação, publicando e publicado.
+
+A publicação real precisa utilizar a API do provedor configurado, tratar erros e registrar a URL resultante. Se nenhuma integração estiver configurada, explique isso e mantenha disponível a pré-visualização local.
+
+Não invente URLs, domínios, certificados SSL ou confirmações de publicação.
+
+## 5. PROSPECÇÃO DE EMPRESAS LOCAIS
+
+Crie uma tela para pesquisar empresas por:
+- Cidade e região.
+- Categoria ou segmento.
+- Nome da empresa.
+- Presença de site, quando essa informação puder ser verificada.
+- Telefone e canais comerciais disponíveis.
+
+Use uma fonte de dados ou API autorizada, com configuração no backend. Implemente paginação, filtros, deduplicação e opção de salvar empresas como leads no CRM.
+
+Não declare que uma empresa não possui site sem evidência suficiente. Não faça scraping proibido nem tente contornar bloqueios de serviços externos.
+
+Se a integração não estiver configurada, apresente instruções de configuração e permita importar uma planilha CSV de leads.
+
+## 6. CRM E CLIENTES
+
+Preserve os recursos existentes de contatos e acrescente:
+- Cadastro completo de empresas e pessoas.
+- Telefone, e-mail, site e observações.
+- Origem do lead e data de criação.
+- Etapa do funil comercial.
+- Etiquetas e filtros.
+- Histórico de interações.
+- Importação e exportação CSV.
+- Seleção manual de destinatários.
+- Registro de consentimento e opção de não receber mensagens.
+
+Os dados devem ser persistidos no banco e isolados por usuário ou organização. Não permita que um usuário acesse os contatos de outro.
+
+## 7. PROPOSTAS, CONTRATOS E MENSALIDADES
+
+Permita criar propostas comerciais para os sites desenvolvidos, com:
+- Cliente vinculado.
+- Serviços incluídos.
+- Valor inicial.
+- Mensalidade.
+- Descrição e condições.
+- Data de emissão e validade.
+- Status da proposta.
+
+Permita transformar uma proposta aprovada em contrato e acompanhar vencimentos e pagamentos.
+
+Não considere um contrato assinado sem assinatura válida e não marque pagamentos como recebidos sem confirmação de um provedor de pagamento.
+
+Se houver cobrança recorrente, utilize uma integração de pagamentos configurável, com webhooks verificados no servidor.
+
+## 8. MENSAGENS E CAMPANHAS
+
+Crie uma central para preparar mensagens comerciais personalizadas por cliente, usando os dados do CRM.
+
+Inclua modelos, variáveis de personalização, pré-visualização, seleção dos destinatários, revisão, agendamento e histórico de envio.
+
+A integração com WhatsApp deve usar a WhatsApp Business Platform ou um provedor autorizado. Para e-mail, utilize um serviço configurado no backend.
+
+Não declare que uma mensagem foi enviada sem confirmação do provedor. Registre estados como rascunho, agendada, enviada, entregue, falhou ou cancelada, conforme os dados realmente disponíveis.
+
+Respeite consentimento, descadastramento, limites do provedor e regras aplicáveis. Não envie campanhas automaticamente sem uma ação explícita de aprovação.
+
+## 9. AUTOMAÇÕES
+
+Crie uma área visual para configurar:
+- Gatilhos.
+- Condições.
+- Ações.
+- Horários.
+- Estado ativo ou pausado.
+- Histórico de execuções.
+- Tentativas e tratamento de erros.
+
+Exemplo: quando um lead for cadastrado, criar uma tarefa de acompanhamento.
+
+Outro exemplo: quando uma proposta mudar para aprovada, atualizar a etapa do funil.
+
+Utilize tarefas persistentes no backend. Não dependa apenas de temporizadores do navegador para executar ações importantes.
+
+## 10. BANCO DE DADOS E SEGURANÇA
+
+Antes de alterar o banco, examine as tabelas e migrations existentes.
+
+Crie migrations versionadas para os novos recursos. Preserve os dados atuais.
+
+Implemente validação de entradas, autenticação, autorização, isolamento dos dados por organização, tratamento de erros e logs.
+
+Guarde chaves de APIs e credenciais somente em variáveis de ambiente no servidor. Nunca envie segredos ao navegador.
+
+Registre ações importantes e evite duplicar contratos, pagamentos ou envios em caso de repetição de uma solicitação.
+
+## 11. IMPLEMENTAÇÃO DO HTML, CSS E FUNCIONALIDADE
+
+Crie todas as páginas necessárias com HTML semântico, React/TSX e CSS/Tailwind conforme a arquitetura existente.
+
+Garanta:
+- Layout responsivo para desktop e celular.
+- Formulários com validação.
+- Botões que executem ações reais.
+- Estados de carregamento, sucesso e erro.
+- Navegação funcional.
+- Mensagens claras quando uma integração estiver ausente.
+- Ausência de links quebrados, telas vazias e erros no console.
+
+## 12. EXECUÇÃO E TESTES OBRIGATÓRIOS
+
+Trabalhe diretamente no projeto atual.
+
+Siga esta ordem:
+1. Inspecione a estrutura de arquivos e os scripts existentes.
+2. Execute os testes e verificações iniciais.
+3. Corrija os problemas encontrados antes de ampliar a aplicação.
+4. Implemente as funcionalidades por módulos.
+5. Execute o typecheck, os testes e o build disponíveis.
+6. Corrija erros introduzidos pelas alterações.
+7. Informe os arquivos modificados, os comandos executados e os resultados reais.
+
+Não diga que um recurso está completo só porque a tela foi criada. Verifique também a persistência, as APIs e os fluxos principais.
+
+Comece agora inspecionando o projeto e implemente primeiro o módulo “Criar site com IA”, incluindo salvamento de projetos e pré-visualização. Depois continue com “Meus sites”, “Editor visual”, “Prospecção” e os módulos comerciais.
+
+Não pare após produzir um plano: implemente as alterações possíveis no projeto atual e deixe explícito o que depende de credenciais ou serviços externos.
