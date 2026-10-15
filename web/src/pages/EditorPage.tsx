@@ -8,14 +8,14 @@ import { SitePreview } from '../components/SitePreview';
 import { layoutLabel } from '../components/siteHtml';
 import type { SiteContent, SiteBrief, SiteLayout, FaqItem } from '../types/site';
 
-const LAYOUT_OPTIONS: SiteLayout[] = [
-  'barbearia',
-  'salao',
-  'restaurante',
-  'loja',
-  'clinica',
-  'servico',
-  'generico',
+const LAYOUT_OPTIONS: { value: SiteContent['layout']; label: string }[] = [
+  { value: 'generico', label: 'Padrão' },
+  { value: 'barbearia', label: 'Clássico' },
+  { value: 'salao', label: 'Elegante' },
+  { value: 'restaurante', label: 'Acolhedor' },
+  { value: 'loja', label: 'Moderno' },
+  { value: 'clinica', label: 'Confiança' },
+  { value: 'servico', label: 'Direto' },
 ];
 
 export default function EditorPage() {
@@ -92,15 +92,14 @@ export default function EditorPage() {
     });
   }
 
-  function updateLayout(layout: SiteLayout) {
+  function updateLayout(layout: SiteContent['layout']) {
     setContent((p) => (p ? { ...p, layout } : p));
   }
 
-  function updateFaqItem(index: number, field: keyof FaqItem, value: string) {
+  function updateFaqItem(index: number, field: 'q' | 'a', value: string) {
     setContent((p) => {
       if (!p) return p;
-      const items = [...p.faq.items];
-      items[index] = { ...items[index], [field]: value };
+      const items = p.faq.items.map((it, i) => (i === index ? { ...it, [field]: value } : it));
       return { ...p, faq: { ...p.faq, items } };
     });
   }
@@ -110,27 +109,25 @@ export default function EditorPage() {
   function removeFaqItem(index: number) {
     setContent((p) => {
       if (!p) return p;
-      const items = p.faq.items.filter((_, i) => i !== index);
-      return { ...p, faq: { ...p.faq, items } };
+      return { ...p, faq: { ...p.faq, items: p.faq.items.filter((_, i) => i !== index) } };
     });
   }
 
-  function updateGalleryImage(index: number, value: string) {
+  // ── Galeria (URLs de imagem) ──
+  function updateGalleryItem(index: number, value: string) {
     setContent((p) => {
       if (!p) return p;
-      const images = [...p.gallery.images];
-      images[index] = value;
+      const images = p.gallery.images.map((s, i) => (i === index ? value : s));
       return { ...p, gallery: { ...p.gallery, images } };
     });
   }
-  function addGalleryImage() {
+  function addGalleryItem() {
     setContent((p) => (p ? { ...p, gallery: { ...p.gallery, images: [...p.gallery.images, ''] } } : p));
   }
-  function removeGalleryImage(index: number) {
+  function removeGalleryItem(index: number) {
     setContent((p) => {
       if (!p) return p;
-      const images = p.gallery.images.filter((_, i) => i !== index);
-      return { ...p, gallery: { ...p.gallery, images } };
+      return { ...p, gallery: { ...p.gallery, images: p.gallery.images.filter((_, i) => i !== index) } };
     });
   }
 
@@ -149,10 +146,10 @@ export default function EditorPage() {
     <div className="flex min-h-screen">
       <Sidebar />
       <main className="flex-1 p-6 overflow-auto">
-        <header className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <header className="flex flex-wrap items-center justify-between gap-3 mb-6 animate-fade-up">
           <div>
-            <h2 className="text-xl font-semibold text-ink-strong">Editor visual</h2>
-            <p className="text-ink-base text-sm mt-0.5">
+            <h2 className="page-title">Editor visual</h2>
+            <p className="page-subtitle">
               Edite o conteúdo. As mudanças aparecem na prévia na hora.
             </p>
           </div>
@@ -300,22 +297,45 @@ export default function EditorPage() {
                     <input
                       className="field"
                       value={src}
-                      onChange={(e) => updateGalleryImage(i, e.target.value)}
+                      onChange={(e) => updateGalleryItem(i, e.target.value)}
                       placeholder={`URL da foto ${i + 1}`}
                     />
                     <button
                       type="button"
-                      onClick={() => removeGalleryImage(i)}
+                      onClick={() => removeGalleryItem(i)}
                       className="text-xs text-red-400 hover:text-red-300 px-2 shrink-0"
                     >
                       Remover
                     </button>
                   </div>
                 ))}
-                <button type="button" onClick={addGalleryImage} className="btn-secondary text-xs self-start">
+                <button type="button" onClick={addGalleryItem} className="btn-secondary text-xs self-start">
                   Adicionar foto
                 </button>
               </div>
+            </Card>
+
+            <Card>
+              <h3 className="text-sm font-medium text-ink-strong mb-3">Layout</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {LAYOUT_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => updateLayout(opt.value)}
+                    className={`text-xs px-3 py-2 rounded-lg border transition-colors ${
+                      content.layout === opt.value
+                        ? 'border-brand bg-brand-soft text-brand'
+                        : 'border-surface-line text-ink-base hover:border-ink-faint'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-ink-faint mt-3">
+                O layout muda a paleta padrão sugerida; as cores continuam editáveis abaixo.
+              </p>
             </Card>
 
             <Card>

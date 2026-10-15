@@ -242,9 +242,9 @@ export default function CreateSitePage() {
       <Sidebar />
       <main className="flex-1 p-5 sm:p-6 overflow-auto">
         {/* Cabeçalho */}
-        <header className="mb-5">
-          <h2 className="text-xl font-semibold text-ink-strong">Criar site com IA</h2>
-          <p className="text-ink-base text-sm mt-0.5">
+        <header className="mb-5 animate-fade-up">
+          <h2 className="page-title">Criar site com IA</h2>
+          <p className="page-subtitle">
             Preencha o briefing, escolha um modelo e gere seu site.
           </p>
         </header>

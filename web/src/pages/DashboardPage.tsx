@@ -45,9 +45,9 @@ export default function DashboardPage() {
     <div className="flex min-h-screen">
       <Sidebar />
       <main className="flex-1 p-6 overflow-auto">
-        <header className="mb-6">
-          <h2 className="text-xl font-semibold text-ink-strong">Visão geral</h2>
-          <p className="text-ink-base text-sm mt-0.5">
+        <header className="mb-6 animate-fade-up">
+          <h2 className="page-title">Visão geral</h2>
+          <p className="page-subtitle">
             Dados reais da sua base de contatos.
           </p>
         </header>

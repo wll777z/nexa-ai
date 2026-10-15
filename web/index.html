@@ -2,11 +2,39 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
     <title>NEXA AI — Central de Comando</title>
+    <meta name="description" content="NEXA AI: plataforma de inteligência comercial com CRM, gestão de contatos e criador de sites com IA." />
+    <meta name="theme-color" content="#0a0a0b" />
+
+    <!-- Open Graph / redes sociais -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="NEXA AI — Central de Comando" />
+    <meta property="og:description" content="Plataforma de inteligência comercial: CRM, gestão de contatos e criador de sites com IA." />
+    <meta property="og:site_name" content="NEXA AI" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NEXA AI — Central de Comando" />
+    <meta name="twitter:description" content="Plataforma de inteligência comercial: CRM, gestão de contatos e criador de sites com IA." />
+
+    <!-- Fonte Inter (declarada no Tailwind; sem isso caía sempre no system-ui) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Favicon inline (SVG com o "N" da marca; sem depender de arquivo externo) -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236366f1'/%3E%3Ctext x='16' y='22' font-family='system-ui,sans-serif' font-size='18' font-weight='700' fill='white' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E"
+      type="image/svg+xml"
+    />
   </head>
   <body class="bg-surface-app text-ink-strong">
     <div id="root"></div>
+    <noscript>O NEXA AI precisa de JavaScript ativado para funcionar.</noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

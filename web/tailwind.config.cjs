@@ -25,6 +25,15 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
+      fontSize: {
+        xs: ['0.75rem', { lineHeight: '1.5', letterSpacing: '0' }],
+        sm: ['0.875rem', { lineHeight: '1.55', letterSpacing: '0' }],
+        base: ['0.9375rem', { lineHeight: '1.65' }],
+        lg: ['1.0625rem', { lineHeight: '1.6' }],
+        xl: ['1.25rem', { lineHeight: '1.4', letterSpacing: '-0.015em' }],
+        '2xl': ['1.5rem', { lineHeight: '1.35', letterSpacing: '-0.02em' }],
+        '3xl': ['1.875rem', { lineHeight: '1.3', letterSpacing: '-0.025em' }],
+      },
     },
   },
   plugins: [],

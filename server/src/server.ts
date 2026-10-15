@@ -9,6 +9,7 @@ import { contactsRouter } from './modules/contacts/contacts.routes.js';
 import { dashboardRouter } from './modules/dashboard/dashboard.routes.js';
 import { sitesRouter } from './modules/sites/sites.routes.js';
 import { sitesAiRouter } from './modules/sites/sites.ai.routes.js';
+import { prospectingRouter } from './modules/prospecting/prospecting.routes.js';
 
 /** Monta a aplicação Express. Separado do listen() para uso nos testes. */
 export function createApp() {
@@ -32,6 +33,7 @@ export function createApp() {
   // Rotas de HTML por chat (Claude) antes do CRUD de sites
   app.use('/api/sites', sitesAiRouter);
   app.use('/api/sites', sitesRouter);
+  app.use('/api/prospecting', prospectingRouter);
 
   // Rota não encontrada
   app.use((req, res) => {

@@ -18,6 +18,7 @@ export default function LoginPage() {
     password: '',
     organizationName: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   function update(field: string, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -42,11 +43,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface-app px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-surface-app px-4 py-10">
+      {/* Fundo decorativo discreto — glow suave da marca, sem exagero */}
+      <div
+        className="pointer-events-none fixed inset-0 opacity-40"
+        style={{
+          background:
+            'radial-gradient(600px 320px at 50% -60px, rgb(99 102 241 / 0.18), transparent 70%)',
+        }}
+        aria-hidden="true"
+      />
+      <div className="w-full max-w-md relative animate-fade-up">
         <div className="text-center mb-8">
+          <div
+            className="w-12 h-12 rounded-xl bg-brand mx-auto mb-4 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-brand/30"
+            aria-hidden="true"
+          >
+            N
+          </div>
           <h1 className="text-2xl font-bold text-ink-strong">NEXA AI</h1>
-          <p className="text-ink-base text-sm mt-1">
+          <p className="text-ink-base text-sm mt-1.5">
             Plataforma de inteligência comercial
           </p>
         </div>
@@ -106,28 +122,42 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label className="field-label">E-mail</label>
+              <label className="field-label" htmlFor="login-email">E-mail</label>
               <input
+                id="login-email"
                 className="field"
                 type="email"
                 value={form.email}
                 onChange={(e) => update('email', e.target.value)}
                 required
+                autoComplete="email"
                 placeholder="seu@email.com"
               />
             </div>
 
             <div>
-              <label className="field-label">Senha</label>
-              <input
-                className="field"
-                type="password"
-                value={form.password}
-                onChange={(e) => update('password', e.target.value)}
-                required
-                minLength={mode === 'register' ? 8 : 1}
-                placeholder={mode === 'register' ? 'Mínimo 8 caracteres' : 'Sua senha'}
-              />
+              <label className="field-label" htmlFor="login-password">Senha</label>
+              <div className="relative">
+                <input
+                  id="login-password"
+                  className="field pr-16"
+                  type={showPassword ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={(e) => update('password', e.target.value)}
+                  required
+                  autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                  minLength={mode === 'register' ? 8 : 1}
+                  placeholder={mode === 'register' ? 'Mínimo 8 caracteres' : 'Sua senha'}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-ink-faint hover:text-ink-base px-2 py-1 rounded transition-colors"
+                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                >
+                  {showPassword ? 'Ocultar' : 'Mostrar'}
+                </button>
+              </div>
             </div>
 
             {error && <ErrorMessage message={error} />}
@@ -141,6 +171,32 @@ export default function LoginPage() {
             </button>
           </form>
         </Card>
+
+        <p className="text-center text-xs text-ink-faint mt-6">
+          {mode === 'login' ? (
+            <>
+              Ainda não tem conta?{' '}
+              <button
+                type="button"
+                onClick={() => { setMode('register'); setError(''); }}
+                className="text-brand hover:text-brand-hover font-medium transition-colors"
+              >
+                Criar conta
+              </button>
+            </>
+          ) : (
+            <>
+              Já tem conta?{' '}
+              <button
+                type="button"
+                onClick={() => { setMode('login'); setError(''); }}
+                className="text-brand hover:text-brand-hover font-medium transition-colors"
+              >
+                Entrar
+              </button>
+            </>
+          )}
+        </p>
       </div>
     </div>
   );

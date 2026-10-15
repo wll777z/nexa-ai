@@ -101,10 +101,10 @@ export default function ContactsPage() {
     <div className="flex min-h-screen">
       <Sidebar />
       <main className="flex-1 p-6 overflow-auto">
-        <header className="flex items-center justify-between mb-6">
+        <header className="flex flex-wrap items-center justify-between gap-3 mb-6 animate-fade-up">
           <div>
-            <h2 className="text-xl font-semibold text-ink-strong">Clientes e contatos</h2>
-            <p className="text-ink-base text-sm mt-0.5">
+            <h2 className="page-title">Clientes e contatos</h2>
+            <p className="page-subtitle">
               {data ? `${data.total} contato(s) cadastrado(s)` : 'Carregando...'}
             </p>
           </div>
