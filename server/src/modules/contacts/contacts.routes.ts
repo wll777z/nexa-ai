@@ -169,10 +169,16 @@ contactsRouter.put('/:id', (req, res, next) => {
     if (!current || current.organization_id !== org) throw notFound('Contato não encontrado.');
 
     const body = (req.body ?? {}) as Record<string, unknown>;
+    if (body.name !== undefined && (typeof body.name !== 'string' || body.name.trim().length < 2)) {
+      throw badRequest('Informe o nome do contato (mínimo 2 caracteres).');
+    }
     const email =
       typeof body.email === 'string' && body.email.trim()
         ? body.email.trim().toLowerCase()
         : current.email;
+    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      throw badRequest('E-mail inválido.');
+    }
 
     const rawPhone =
       typeof body.phone === 'string' && body.phone.trim() ? body.phone.trim() : current.phone;
@@ -185,6 +191,14 @@ contactsRouter.put('/:id', (req, res, next) => {
         [org, email, id],
       );
       if (dup) throw conflict(`Já existe outro contato com o e-mail ${email}.`);
+    }
+
+    if (phone) {
+      const dup = get<{ id: number }>(
+        'SELECT id FROM contacts WHERE organization_id = ? AND phone = ? AND id <> ?',
+        [org, phone, id],
+      );
+      if (dup) throw conflict(`Já existe outro contato com o telefone ${phone}.`);
     }
 
     const tags = Array.isArray(body.tags) ? tagList(body.tags) : current.tags;
