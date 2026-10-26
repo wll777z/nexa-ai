@@ -176,7 +176,7 @@ contactsRouter.put('/:id', (req, res, next) => {
       typeof body.email === 'string' && body.email.trim()
         ? body.email.trim().toLowerCase()
         : current.email;
-    if (email && !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)) {
+    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       throw badRequest('E-mail inválido.');
     }
 
