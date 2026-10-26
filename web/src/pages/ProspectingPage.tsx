@@ -139,8 +139,8 @@ function SetupBanner() {
             Você está no modo demonstração — os leads gerados são fictícios.
           </p>
           <p className="text-sm text-ink-base">
-            Para buscar empresas reais (com telefone e site), conecte o Google
-            Maps Places API:
+            Cadastre empresas reais manualmente ou importe seu próprio CSV nesta página.
+            Para buscar por integração, conecte o Google Maps Places API:
           </p>
           <ol className="text-sm text-ink-base list-decimal list-inside mt-2 space-y-1">
             <li>
@@ -383,6 +383,14 @@ function LeadsTab({ onDone }: { onDone: () => void }) {
   const [statusFilter, setStatusFilter] = useState<LeadStatus | ''>('');
   const [priorityFilter, setPriorityFilter] = useState<LeadPriority | ''>('');
   const [textSearch, setTextSearch] = useState('');
+  const [cityFilter, setCityFilter] = useState('');
+  const [stateFilter, setStateFilter] = useState('');
+  const [neighborhoodFilter, setNeighborhoodFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [sourceFilter, setSourceFilter] = useState('');
+  const [websiteFilter, setWebsiteFilter] = useState<'' | 'provided' | 'not_provided'>('');
+  const [showManual, setShowManual] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
   const [searchResult, setSearchResult] = useState<string>('');
   const [searchError, setSearchError] = useState('');
@@ -394,13 +402,19 @@ function LeadsTab({ onDone }: { onDone: () => void }) {
   });
 
   const leadsQuery = useQuery({
-    queryKey: ['prospecting-leads', statusFilter, priorityFilter, textSearch, showDemo],
+    queryKey: ['prospecting-leads', statusFilter, priorityFilter, textSearch, cityFilter, stateFilter, neighborhoodFilter, categoryFilter, sourceFilter, websiteFilter, showDemo],
     queryFn: () =>
       prospectingApi.leads({
         status: statusFilter || undefined,
         priority: priorityFilter || undefined,
         search: textSearch || undefined,
         includeDemo: showDemo,
+        city: cityFilter || undefined,
+        state: stateFilter || undefined,
+        neighborhood: neighborhoodFilter || undefined,
+        category: categoryFilter || undefined,
+        source: sourceFilter || undefined,
+        websiteStatus: websiteFilter || undefined,
       }),
   });
 
@@ -483,6 +497,12 @@ function LeadsTab({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap gap-2">
+        <button className="btn-primary" onClick={() => setShowManual(v => !v)}>Cadastrar empresa</button>
+        <button className="btn-secondary" onClick={() => setShowImport(v => !v)}>Importar CSV</button>
+      </div>
+      {showManual && <ManualCompanyForm onDone={() => { setShowManual(false); onDone(); }} />}
+      {showImport && <CsvImport onDone={() => { setShowImport(false); onDone(); }} />}
       <Card>
         <form onSubmit={handleSearch} className="flex flex-col gap-3">
           <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_auto] gap-3 items-end">
@@ -558,6 +578,16 @@ function LeadsTab({ onDone }: { onDone: () => void }) {
             onChange={(e) => setTextSearch(e.target.value)}
             placeholder="Buscar lead..."
           />
+          <input className="field max-w-[160px]" aria-label="Filtrar cidade" placeholder="Cidade" value={cityFilter} onChange={e => setCityFilter(e.target.value)} />
+          <input className="field max-w-[90px]" aria-label="Filtrar estado" placeholder="UF" value={stateFilter} onChange={e => setStateFilter(e.target.value)} />
+          <input className="field max-w-[160px]" aria-label="Filtrar bairro" placeholder="Bairro" value={neighborhoodFilter} onChange={e => setNeighborhoodFilter(e.target.value)} />
+          <input className="field max-w-[160px]" aria-label="Filtrar segmento" placeholder="Segmento" value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} />
+          <select className="field max-w-[160px]" aria-label="Filtrar fonte" value={sourceFilter} onChange={e => setSourceFilter(e.target.value)}>
+            <option value="">Todas as fontes</option><option value="manual">Manual</option><option value="csv">CSV</option><option value="google_maps">Google Maps</option><option value="demo">Demo</option>
+          </select>
+          <select className="field max-w-[180px]" aria-label="Filtrar site" value={websiteFilter} onChange={e => setWebsiteFilter(e.target.value as typeof websiteFilter)}>
+            <option value="">Site: qualquer</option><option value="provided">Site informado</option><option value="not_provided">Site não informado</option>
+          </select>
           <select
             className="field max-w-[180px]"
             value={statusFilter}
@@ -614,6 +644,7 @@ function LeadsTab({ onDone }: { onDone: () => void }) {
                   <th className="px-4 py-3 font-medium">Empresa</th>
                   <th className="px-4 py-3 font-medium">Categoria</th>
                   <th className="px-4 py-3 font-medium">Cidade</th>
+                  <th className="px-4 py-3 font-medium">Fonte / site</th>
                   <th className="px-4 py-3 font-medium">Prioridade</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium">Motivo</th>
@@ -647,6 +678,37 @@ function LeadsTab({ onDone }: { onDone: () => void }) {
       </Card>
     </div>
   );
+}
+
+function ManualCompanyForm({ onDone }: { onDone: () => void }) {
+  const [form, setForm] = useState<Record<string, string>>({ name: '', category: '', city: '', state: '', neighborhood: '', website: '', phone: '', sourceLabel: '', notes: '' });
+  const mutation = useMutation({ mutationFn: () => prospectingApi.addManual(form), onSuccess: onDone });
+  return <Card>
+    <h3 className="text-lg font-semibold mb-3">Cadastrar empresa real</h3>
+    <form onSubmit={e => { e.preventDefault(); mutation.mutate(); }} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {([['name', 'Nome *'], ['category', 'Segmento *'], ['city', 'Cidade *'], ['state', 'Estado (UF)'], ['neighborhood', 'Bairro'], ['website', 'Site informado'], ['phone', 'Telefone comercial'], ['sourceLabel', 'Fonte dos dados'], ['notes', 'Observações']] as const).map(([key, label]) =>
+        <label key={key} className="text-sm text-ink-base">{label}<input className="field mt-1" value={form[key]} required={['name', 'category', 'city'].includes(key)} onChange={e => setForm({ ...form, [key]: e.target.value })} /></label>)}
+      <div className="sm:col-span-2">{mutation.error && <ErrorMessage message={(mutation.error as Error).message} />}<button className="btn-primary" disabled={mutation.isPending}>Salvar empresa</button></div>
+    </form>
+  </Card>;
+}
+
+function CsvImport({ onDone }: { onDone: () => void }) {
+  const [csv, setCsv] = useState('');
+  const [filename, setFilename] = useState('empresas.csv');
+  const [rows, setRows] = useState<Array<{ line: number; company?: Record<string, string>; error?: string; match?: { id: number; kind: string } }> | null>(null);
+  const [error, setError] = useState('');
+  const [result, setResult] = useState('');
+  const preview = useMutation({ mutationFn: () => prospectingApi.previewCsv(csv), onSuccess: data => { setRows(data.rows); setError(''); }, onError: (err: Error) => setError(err.message) });
+  const confirm = useMutation({ mutationFn: () => prospectingApi.confirmCsv(csv, filename), onSuccess: data => { setResult(`${data.imported} importada(s); ${data.rejected} rejeitada(s).`); setRows(null); onDone(); }, onError: (err: Error) => setError(err.message) });
+  return <Card>
+    <h3 className="text-lg font-semibold mb-2">Importar empresas de CSV</h3>
+    <p className="text-sm text-ink-base mb-3">Cabeçalho: nome, segmento, cidade. Opcionais: estado, bairro, site, telefone, fonte, observacoes. Máximo 500 linhas e 256 KB. Confira os dados antes de salvar.</p>
+    <input type="file" accept=".csv,text/csv" className="field mb-3" aria-label="Arquivo CSV" onChange={async e => { const file = e.target.files?.[0]; if (!file) return; if (file.size > 256000) { setError('CSV excede 256 KB.'); return; } setCsv(await file.text()); setFilename(file.name); setRows(null); }} />
+    <div className="flex gap-2"><button className="btn-secondary" disabled={!csv || preview.isPending} onClick={() => preview.mutate()}>Ver prévia</button>{rows && <button className="btn-primary" disabled={confirm.isPending || !rows.some(r => r.company && !r.error && !r.match)} onClick={() => confirm.mutate()}>Confirmar importação</button>}</div>
+    {error && <ErrorMessage message={error} />}{result && <p className="text-sm text-green-400 mt-2">{result}</p>}
+    {rows && <div className="max-h-72 overflow-auto mt-3 text-sm"><p>{rows.length} linha(s). Duplicatas e linhas inválidas não serão importadas.</p>{rows.map(r => <p key={r.line} className="border-b border-surface-line py-1">Linha {r.line}: {r.company?.name || '—'} — {r.error || (r.match ? `Possível duplicata do lead ${r.match.id}` : 'Pronta')}</p>)}</div>}
+  </Card>;
 }
 
 function StatBox({ label, value }: { label: string; value: number }) {
@@ -698,7 +760,8 @@ function LeadRow({
           )}
         </td>
         <td className="px-4 py-3 text-ink-base">{lead.category ?? '—'}</td>
-        <td className="px-4 py-3 text-ink-base">{lead.city ?? '—'}</td>
+        <td className="px-4 py-3 text-ink-base">{[lead.neighborhood, lead.city, lead.state].filter(Boolean).join(', ') || '—'}</td>
+        <td className="px-4 py-3 text-ink-base text-xs">{lead.sourceLabel || lead.source}<br />{lead.website ? <a href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`} target="_blank" rel="noopener noreferrer" className="text-brand underline">Site informado</a> : 'Site não informado (não verificado)'}</td>
         <td className="px-4 py-3">
           <Badge color={priorityColor(lead.priority)}>
             {PRIORITY_LABELS[lead.priority]}

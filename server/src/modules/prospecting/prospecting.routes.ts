@@ -20,9 +20,37 @@ import {
 } from './prospecting.service.js';
 import { isAIConfigured } from './prospecting.ai.js';
 import { ALL_STATUSES, type LeadStatus, type LeadPriority } from './prospecting.model.js';
+import { addCompany, confirmCsv, previewCsv, validateCompany } from './opportunities.js';
+import { z } from 'zod';
 
 export const prospectingRouter = Router();
 prospectingRouter.use(requireAuth);
+
+const importSchema = z.object({ csv: z.string().min(1).max(256_000), filename: z.string().trim().min(1).max(160).optional() });
+prospectingRouter.post('/leads/manual', (req, res, next) => {
+  try {
+    const company = validateCompany(req.body);
+    const result = addCompany(req.auth!.org, company, 'manual');
+    if (result.status === 'created') logActivity(req.auth!.org, 'manual_added', 'lead', result.leadId, company.name);
+    res.status(result.status === 'created' ? 201 : 409).json(result);
+  } catch (error) { next(error); }
+});
+
+prospectingRouter.post('/import/preview', (req, res, next) => {
+  try {
+    const input = importSchema.parse(req.body);
+    res.json({ rows: previewCsv(req.auth!.org, input.csv) });
+  } catch (error) { next(error instanceof z.ZodError ? badRequest('Arquivo CSV inválido.') : error); }
+});
+
+prospectingRouter.post('/import/confirm', (req, res, next) => {
+  try {
+    const input = importSchema.parse(req.body);
+    const result = confirmCsv(req.auth!.org, req.auth!.sub, input.filename ?? 'import.csv', input.csv);
+    logActivity(req.auth!.org, 'csv_imported', 'import', null, `${result.imported} empresas importadas de ${input.filename ?? 'import.csv'}`);
+    res.json(result);
+  } catch (error) { next(error instanceof z.ZodError ? badRequest('Arquivo CSV inválido.') : error); }
+});
 
 // GET /api/prospecting/status — o que está configurado (sem expor chaves)
 prospectingRouter.get('/status', (_req, res) => {
@@ -130,7 +158,7 @@ prospectingRouter.post('/search', async (req, res, next) => {
 // GET /api/prospecting/leads — lista com filtros
 prospectingRouter.get('/leads', (req, res) => {
   const org = req.auth!.org;
-  const { status, priority, search, includeDemo } = req.query;
+  const { status, priority, search, includeDemo, city, state, neighborhood, category, source, websiteStatus } = req.query;
 
   const validStatus = typeof status === 'string' && ALL_STATUSES.includes(status as LeadStatus)
     ? (status as LeadStatus)
@@ -144,6 +172,12 @@ prospectingRouter.get('/leads', (req, res) => {
     priority: validPriority,
     search: typeof search === 'string' ? search : undefined,
     includeDemo: includeDemo === 'true',
+    city: typeof city === 'string' ? city : undefined,
+    state: typeof state === 'string' ? state : undefined,
+    neighborhood: typeof neighborhood === 'string' ? neighborhood : undefined,
+    category: typeof category === 'string' ? category : undefined,
+    source: typeof source === 'string' ? source : undefined,
+    websiteStatus: websiteStatus === 'provided' || websiteStatus === 'not_provided' ? websiteStatus : undefined,
   });
 
   res.json({ data: leads, total: leads.length });

@@ -209,6 +209,31 @@ CREATE TABLE IF NOT EXISTS prospecting_activity_log (
 CREATE INDEX IF NOT EXISTS idx_prospect_log ON prospecting_activity_log(organization_id, created_at);
 `,
   },
+  {
+    id: 4,
+    name: 'prospecting_imports',
+    sql: `
+ALTER TABLE prospecting_leads ADD COLUMN source_label TEXT;
+ALTER TABLE prospecting_leads ADD COLUMN notes TEXT;
+CREATE TABLE prospecting_imports (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  organization_id INTEGER NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  filename TEXT NOT NULL,
+  total_rows INTEGER NOT NULL,
+  imported_rows INTEGER NOT NULL,
+  rejected_rows INTEGER NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX idx_prospecting_imports_org ON prospecting_imports(organization_id);
+`,
+  },
+  {
+    id: 5,
+    name: 'prospecting_lead_state',
+    sql: `ALTER TABLE prospecting_leads ADD COLUMN state TEXT;
+CREATE INDEX idx_prospecting_leads_location ON prospecting_leads(organization_id, state, city, neighborhood);`,
+  },
 ];
 
 /** Aplica todas as migrations pendentes. Idempotente. */

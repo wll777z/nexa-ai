@@ -182,16 +182,16 @@ export default function EditorPage() {
               <div className="flex flex-wrap gap-2">
                 {LAYOUT_OPTIONS.map((l) => (
                   <button
-                    key={l}
+                    key={l.value}
                     type="button"
-                    onClick={() => updateLayout(l)}
+                    onClick={() => updateLayout(l.value)}
                     className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
-                      content.layout === l
+                      content.layout === l.value
                         ? 'bg-brand-soft text-brand border-brand'
                         : 'bg-surface-hover text-ink-base border-surface-line hover:text-ink-strong'
                     }`}
                   >
-                    {layoutLabel(l)}
+                    {l.label}
                   </button>
                 ))}
               </div>

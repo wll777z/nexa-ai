@@ -42,10 +42,13 @@ export interface Lead {
   name: string;
   category: string | null;
   city: string | null;
+  state: string | null;
   neighborhood: string | null;
   website: string | null;
   phone: string | null;
   source: string;
+  sourceLabel: string | null;
+  notes: string | null;
   reason: string | null;
   priority: LeadPriority;
   status: LeadStatus;

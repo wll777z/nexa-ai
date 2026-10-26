@@ -316,6 +316,12 @@ export function listLeads(
     priority?: LeadPriority;
     search?: string;
     includeDemo?: boolean;
+    city?: string;
+    state?: string;
+    neighborhood?: string;
+    category?: string;
+    source?: string;
+    websiteStatus?: 'provided' | 'not_provided';
   } = {},
 ): Lead[] {
   let sql = 'SELECT * FROM prospecting_leads WHERE organization_id = ?';
@@ -337,6 +343,14 @@ export function listLeads(
     const like = `%${filters.search}%`;
     params.push(like, like, like);
   }
+  for (const [column, value] of [
+    ['city', filters.city], ['state', filters.state], ['neighborhood', filters.neighborhood],
+    ['category', filters.category], ['source', filters.source],
+  ] as const) {
+    if (value) { sql += ` AND ${column} LIKE ?`; params.push(`%${value}%`); }
+  }
+  if (filters.websiteStatus === 'provided') sql += " AND website IS NOT NULL AND website <> ''";
+  if (filters.websiteStatus === 'not_provided') sql += " AND (website IS NULL OR website = '')";
 
   sql += " ORDER BY CASE priority WHEN 'alta' THEN 0 WHEN 'media' THEN 1 ELSE 2 END, updated_at DESC";
 
@@ -349,10 +363,13 @@ function mapLeadRow(r: Record<string, unknown>): Lead {
     name: r.name as string,
     category: (r.category as string) || null,
     city: (r.city as string) || null,
+    state: (r.state as string) || null,
     neighborhood: (r.neighborhood as string) || null,
     website: (r.website as string) || null,
     phone: (r.phone as string) || null,
     source: r.source as string,
+    sourceLabel: (r.source_label as string) || null,
+    notes: (r.notes as string) || null,
     reason: (r.reason as string) || null,
     priority: r.priority as LeadPriority,
     status: r.status as LeadStatus,
